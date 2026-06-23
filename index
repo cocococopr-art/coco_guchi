@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>定例MTG叩き台</title>
+  <style>
+    :root{
+      --bg:#f4f6fb;
+      --card:#ffffff;
+      --ink:#172033;
+      --muted:#6b7280;
+      --line:#d9dfeb;
+      --main:#1f3f82;
+      --soft:#eef3ff;
+      --danger:#dc2626;
+      --warn:#f59e0b;
+      --safe:#16a34a;
+      --shadow:0 10px 30px rgba(23,32,51,.08);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box;}
+
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#f7f9ff 0%,#eef2f7 100%);
+      color:var(--ink);
+      font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;
+      line-height:1.6;
+    }
+
+    .app{
+      width:min(960px,100%);
+      margin:0 auto;
+      padding:18px 14px 120px;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:5;
+      margin:-18px -14px 18px;
+      padding:18px 14px 14px;
+      background:rgba(247,249,255,.92);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(217,223,235,.8);
+    }
+
+    .title-row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    h1{
+      margin:0;
+      font-size:23px;
+      line-height:1.25;
+      letter-spacing:.02em;
+    }
+
+    .badge{
+      flex:0 0 auto;
+      padding:6px 10px;
+      border-radius:999px;
+      background:var(--main);
+      color:white;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .sub{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .grid{
+      display:grid;
+      gap:14px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+
+    .section-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    h2{
+      margin:0;
+      font-size:18px;
+      line-height:1.3;
+    }
+
+    .hint{
+      color:var(--muted);
+      font-size:12px;
+      margin:0 0 10px;
+    }
+
+    label{
+      display:block;
+      font-size:12px;
+      font-weight:700;
+      color:#374151;
+      margin:10px 0 6px;
+    }
+
+    input, textarea, select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:13px;
+      padding:12px 13px;
+      background:#fff;
+      color:var(--ink);
+      font-size:16px;
+      outline:none;
+    }
+
+    textarea{
+      min-height:92px;
+      resize:vertical;
+    }
+
+    input:focus, textarea:focus, select:focus{
+      border-color:var(--main);
+      box-shadow:0 0 0 3px rgba(31,63,130,.12);
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .btn{
+      border:none;
+      border-radius:13px;
+      padding:11px 13px;
+      font-size:14px;
+      font-weight:800;
+      cursor:pointer;
+      background:var(--main);
+      color:#fff;
+      min-height:44px;
+    }
+
+    .btn.secondary{
+      background:var(--soft);
+      color:var(--main);
+      border:1px solid #cbd8ff;
+    }
+
+    .btn.ghost{
+      background:#fff;
+      color:#374151;
+      border:1px solid var(--line);
+    }
+
+    .btn.danger{
+      background:#fff1f2;
+      color:#be123c;
+      border:1px solid #fecdd3;
+    }
+
+    .mini-btn{
+      border:1px solid var(--line);
+      background:#fff;
+      color:#374151;
+      border-radius:10px;
+      padding:7px 9px;
+      font-size:12px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .list{
+      display:grid;
+      gap:10px;
+    }
+
+    .item{
+      border:1px solid var(--line);
+      border-radius:15px;
+      background:#fbfcff;
+      padding:12px;
+    }
+
+    .item-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:8px;
+    }
+
+    .item-title{
+      font-weight:800;
+      font-size:13px;
+      color:#374151;
+    }
+
+    .danger-chip{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:999px;
+      padding:5px 10px;
+      font-size:12px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .danger-low{background:#ecfdf5;color:#15803d;}
+    .danger-mid{background:#fffbeb;color:#b45309;}
+    .danger-high{background:#fef2f2;color:#b91c1c;}
+
+    .member-grid{
+      display:grid;
+      gap:9px;
+    }
+
+    .floating{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:10;
+      background:rgba(255,255,255,.94);
+      backdrop-filter:blur(16px);
+      border-top:1px solid var(--line);
+      padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+    }
+
+    .floating-inner{
+      width:min(960px,100%);
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:8px;
+    }
+
+    .preview{
+      white-space:pre-wrap;
+      background:#0f172a;
+      color:#e5e7eb;
+      border-radius:15px;
+      padding:14px;
+      font-size:13px;
+      overflow:auto;
+      max-height:360px;
+    }
+
+    .print-title{
+      display:none;
+    }
+
+    @media(max-width:560px){
+      .row{
+        grid-template-columns:1fr;
+      }
+      h1{
+        font-size:21px;
+      }
+      .floating-inner{
+        grid-template-columns:1fr 1fr;
+      }
+      .floating-inner .btn:first-child{
+        grid-column:1 / -1;
+      }
+    }
+
+    @media print{
+      body{
+        background:#fff;
+      }
+      header,.floating,.no-print,.mini-btn,.btn{
+        display:none !important;
+      }
+      .app{
+        padding:0;
+        width:100%;
+      }
+      .card{
+        box-shadow:none;
+        border:1px solid #cfd6e4;
+        break-inside:avoid;
+        margin-bottom:12px;
+      }
+      input,textarea,select{
+        border:none;
+        padding:0;
+        font-size:13px;
+        background:transparent;
+        resize:none;
+      }
+      textarea{
+        min-height:auto;
+      }
+      .print-title{
+        display:block;
+        margin:0 0 14px;
+        font-size:22px;
+        font-weight:900;
+      }
+      .hint{
+        display:none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title-row">
+        <div>
+          <h1>定例MTG叩き台</h1>
+          <p class="sub">スマホで入力 → PDF保存 → LINE共有まで使えるMTG記録フォーム</p>
+        </div>
+        <div class="badge">MTG</div>
+      </div>
+    </header>
+
+    <div class="print-title">定例MTG叩き台</div>
+
+    <main class="grid">
+      <section class="card">
+        <h2>基本情報</h2>
+        <div class="row">
+          <div>
+            <label>MTG日</label>
+            <input id="meetingDate" type="date">
+          </div>
+          <div>
+            <label>記入者</label>
+            <input id="writer" type="text" placeholder="例：山尾">
+          </div>
+        </div>
+        <label>MTGタイトル</label>
+        <input id="meetingTitle" type="text" placeholder="例：6月第4週 定例MTG">
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <h2>先週のFB</h2>
+          <button class="mini-btn no-print" onclick="addItem('feedbackList','FB')">＋追加</button>
+        </div>
+        <p class="hint">良かった点・改善点・気づきを箇条書きで入力</p>
+        <div id="feedbackList" class="list"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <h2>課題に対しての進捗</h2>
+          <button class="mini-btn no-print" onclick="addProgress()">＋追加</button>
+        </div>
+        <p class="hint">前回課題に対して、どこまで進んだかを記録</p>
+        <div id="progressList" class="list"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <h2>新規課題</h2>
+          <button class="mini-btn no-print" onclick="addNewIssue()">＋追加</button>
+        </div>
+        <p class="hint">今回新しく出た課題・次回までの宿題</p>
+        <div id="issueList" class="list"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <h2>各メンバーの状態</h2>
+          <button class="mini-btn no-print" onclick="addMember()">＋追加</button>
+        </div>
+        <p class="hint">名前・危険度・状態内容を入力。危険度は自動で色分け。</p>
+        <div id="memberList" class="list"></div>
+      </section>
+
+      <section class="card">
+        <h2>共有用テキスト</h2>
+        <p class="hint">LINEで文章として送る場合はここをコピー。入力内容から自動生成できます。</p>
+        <button class="btn secondary no-print" onclick="generatePreview()">共有文を作成</button>
+        <div id="preview" class="preview" style="margin-top:12px;">ここに共有用テキストが表示されます。</div>
+      </section>
+    </main>
+  </div>
+
+  <div class="floating no-print">
+    <div class="floating-inner">
+      <button class="btn" onclick="saveData()">保存</button>
+      <button class="btn secondary" onclick="printPdf()">PDF化</button>
+      <button class="btn ghost" onclick="shareLine()">LINE共有</button>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "regular_mtg_draft_v1";
+
+    function today(){
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth()+1).padStart(2,"0");
+      const dd = String(d.getDate()).padStart(2,"0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function textarea(value="", placeholder="入力してください"){
+      return `<textarea placeholder="${placeholder}">${value}</textarea>`;
+    }
+
+    function removeItem(btn){
+      btn.closest(".item").remove();
+      saveData(false);
+    }
+
+    function addItem(targetId, label, value=""){
+      const target = document.getElementById(targetId);
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div class="item-head">
+          <div class="item-title">・${label}</div>
+          <button class="mini-btn danger no-print" onclick="removeItem(this)">削除</button>
+        </div>
+        ${textarea(value, "例：〇〇の声かけは良かった／〇〇は改善が必要")}
+      `;
+      target.appendChild(div);
+    }
+
+    function addProgress(data={}){
+      const target = document.getElementById("progressList");
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div class="item-head">
+          <div class="item-title">進捗項目</div>
+          <button class="mini-btn danger no-print" onclick="removeItem(this)">削除</button>
+        </div>
+        <label>課題</label>
+        <input type="text" placeholder="例：新人研修の定着" value="${data.task || ""}">
+        <label>進捗</label>
+        <select>
+          <option ${data.status==="未着手"?"selected":""}>未着手</option>
+          <option ${data.status==="進行中"?"selected":""}>進行中</option>
+          <option ${data.status==="完了"?"selected":""}>完了</option>
+          <option ${data.status==="保留"?"selected":""}>保留</option>
+        </select>
+        <label>内容</label>
+        ${textarea(data.detail || "", "例：〇〇までは完了。次は〇〇を確認。")}
+      `;
+      target.appendChild(div);
+    }
+
+    function addNewIssue(data={}){
+      const target = document.getElementById("issueList");
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div class="item-head">
+          <div class="item-title">新規課題</div>
+          <button class="mini-btn danger no-print" onclick="removeItem(this)">削除</button>
+        </div>
+        <label>課題名</label>
+        <input type="text" placeholder="例：7月稼働者の不足" value="${data.title || ""}">
+        <div class="row">
+          <div>
+            <label>担当</label>
+            <input type="text" placeholder="例：山尾" value="${data.owner || ""}">
+          </div>
+          <div>
+            <label>期限</label>
+            <input type="date" value="${data.deadline || ""}">
+          </div>
+        </div>
+        <label>内容</label>
+        ${textarea(data.detail || "", "例：原因・次回までにやること")}
+      `;
+      target.appendChild(div);
+    }
+
+    function addMember(data={}){
+      const target = document.getElementById("memberList");
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div class="item-head">
+          <div class="item-title">メンバー状態</div>
+          <button class="mini-btn danger no-print" onclick="removeItem(this)">削除</button>
+        </div>
+        <div class="member-grid">
+          <div>
+            <label>名前</label>
+            <input type="text" placeholder="例：佐藤" value="${data.name || ""}">
+          </div>
+          <div>
+            <label>危険度</label>
+            <select onchange="updateDangerChip(this)">
+              <option value="低" ${data.level==="低"?"selected":""}>低</option>
+              <option value="中" ${data.level==="中"?"selected":""}>中</option>
+              <option value="高" ${data.level==="高"?"selected":""}>高</option>
+            </select>
+          </div>
+          <div class="danger-chip danger-low">危険度：低</div>
+          <div>
+            <label>内容</label>
+            ${textarea(data.detail || "", "例：モチベーション低下／連絡遅れ／稼働安定など")}
+          </div>
+        </div>
+      `;
+      target.appendChild(div);
+      const select = div.querySelector("select");
+      updateDangerChip(select);
+    }
+
+    function updateDangerChip(select){
+      const item = select.closest(".item");
+      const chip = item.querySelector(".danger-chip");
+      const value = select.value;
+      chip.className = "danger-chip";
+      if(value === "高") chip.classList.add("danger-high");
+      else if(value === "中") chip.classList.add("danger-mid");
+      else chip.classList.add("danger-low");
+      chip.textContent = "危険度：" + value;
+      saveData(false);
+    }
+
+    function collectTextareas(containerId){
+      return [...document.querySelectorAll(`#${containerId} textarea`)]
+        .map(t => t.value.trim())
+        .filter(Boolean);
+    }
+
+    function collectProgress(){
+      return [...document.querySelectorAll("#progressList .item")].map(item => {
+        const inputs = item.querySelectorAll("input");
+        const select = item.querySelector("select");
+        const textarea = item.querySelector("textarea");
+        return {
+          task: inputs[0]?.value.trim() || "",
+          status: select?.value || "",
+          detail: textarea?.value.trim() || ""
+        };
+      }).filter(x => x.task || x.detail);
+    }
+
+    function collectIssues(){
+      return [...document.querySelectorAll("#issueList .item")].map(item => {
+        const inputs = item.querySelectorAll("input");
+        const textarea = item.querySelector("textarea");
+        return {
+          title: inputs[0]?.value.trim() || "",
+          owner: inputs[1]?.value.trim() || "",
+          deadline: inputs[2]?.value || "",
+          detail: textarea?.value.trim() || ""
+        };
+      }).filter(x => x.title || x.detail);
+    }
+
+    function collectMembers(){
+      return [...document.querySelectorAll("#memberList .item")].map(item => {
+        const inputs = item.querySelectorAll("input");
+        const select = item.querySelector("select");
+        const textarea = item.querySelector("textarea");
+        return {
+          name: inputs[0]?.value.trim() || "",
+          level: select?.value || "",
+          detail: textarea?.value.trim() || ""
+        };
+      }).filter(x => x.name || x.detail);
+    }
+
+    function getData(){
+      return {
+        meetingDate: document.getElementById("meetingDate").value,
+        writer: document.getElementById("writer").value.trim(),
+        meetingTitle: document.getElementById("meetingTitle").value.trim(),
+        feedback: collectTextareas("feedbackList"),
+        progress: collectProgress(),
+        issues: collectIssues(),
+        members: collectMembers()
+      };
+    }
+
+    function saveData(showAlert=true){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(getData()));
+      if(showAlert) alert("保存しました。スマホ内に一時保存されています。");
+    }
+
+    function loadData(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      document.getElementById("meetingDate").value = today();
+
+      if(!raw){
+        addItem("feedbackList","FB");
+        addProgress();
+        addNewIssue();
+        addMember();
+        return;
+      }
+
+      const data = JSON.parse(raw);
+      document.getElementById("meetingDate").value = data.meetingDate || today();
+      document.getElementById("writer").value = data.writer || "";
+      document.getElementById("meetingTitle").value = data.meetingTitle || "";
+
+      (data.feedback?.length ? data.feedback : [""]).forEach(v => addItem("feedbackList","FB",v));
+      (data.progress?.length ? data.progress : [{}]).forEach(addProgress);
+      (data.issues?.length ? data.issues : [{}]).forEach(addNewIssue);
+      (data.members?.length ? data.members : [{}]).forEach(addMember);
+    }
+
+    function generatePreview(){
+      const d = getData();
+      const lines = [];
+
+      lines.push("【定例MTG叩き台】");
+      if(d.meetingTitle) lines.push("■タイトル：" + d.meetingTitle);
+      if(d.meetingDate) lines.push("■日付：" + d.meetingDate);
+      if(d.writer) lines.push("■記入者：" + d.writer);
+      lines.push("");
+
+      lines.push("■先週のFB");
+      if(d.feedback.length) d.feedback.forEach(x => lines.push("・" + x));
+      else lines.push("・");
+      lines.push("");
+
+      lines.push("■課題に対しての進捗");
+      if(d.progress.length){
+        d.progress.forEach(x => {
+          lines.push("・" + (x.task || "課題未入力") + "：" + (x.status || "進捗未入力"));
+          if(x.detail) lines.push("　" + x.detail);
+        });
+      } else lines.push("・");
+      lines.push("");
+
+      lines.push("■新規課題");
+      if(d.issues.length){
+        d.issues.forEach(x => {
+          let head = "・" + (x.title || "課題未入力");
+          if(x.owner) head += " / 担当：" + x.owner;
+          if(x.deadline) head += " / 期限：" + x.deadline;
+          lines.push(head);
+          if(x.detail) lines.push("　" + x.detail);
+        });
+      } else lines.push("・");
+      lines.push("");
+
+      lines.push("■各メンバーの状態");
+      if(d.members.length){
+        d.members.forEach(x => {
+          lines.push("・" + (x.name || "名前未入力") + " / 危険度：" + (x.level || "-"));
+          if(x.detail) lines.push("　" + x.detail);
+        });
+      } else lines.push("・");
+
+      const text = lines.join("\n");
+      document.getElementById("preview").textContent = text;
+      return text;
+    }
+
+    function printPdf(){
+      saveData(false);
+      generatePreview();
+      window.print();
+    }
+
+    async function shareLine(){
+      saveData(false);
+      const text = generatePreview();
+
+      if(navigator.share){
+        try{
+          await navigator.share({
+            title:"定例MTG叩き台",
+            text:text
+          });
+          return;
+        }catch(e){}
+      }
+
+      const url = "https://line.me/R/msg/text/?" + encodeURIComponent(text);
+      window.open(url, "_blank");
+    }
+
+    document.addEventListener("input", () => saveData(false));
+    window.addEventListener("load", loadData);
+  </script>
+</body>
+</html>
